@@ -651,10 +651,10 @@ define platformKernelConfig
 		echo "# CONFIG_RALINK_MT7612U is not set" >>$(1); \
 		sed -i "/CONFIG_RTDEV/d" $(1); \
 		echo "CONFIG_RTDEV=y" >>$(1); \
-		sed -i "/CONFIG_RA_NAT_NONE/d" $(1); \
-		echo "# CONFIG_RA_NAT_NONE is not set" >>$(1); \
 		sed -i "/CONFIG_RA_NAT_HW/d" $(1); \
-		echo "CONFIG_RA_NAT_HW=y" >>$(1); \
+		echo "# CONFIG_RA_NAT_HW is not set" >>$(1); \
+		sed -i "/CONFIG_RA_NAT_NONE/d" $(1); \
+		echo "CONFIG_RA_NAT_NONE=y" >>$(1); \
 	fi; \
         if [ "$(RALINK_DFS)" = "y" ] ; then \
                 sed -i "/CONFIG_RALINK_TIMER_DFS/d" $(1); \
