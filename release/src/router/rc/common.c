@@ -1441,6 +1441,9 @@ int mssid_mac_validate(const char *macaddr)
 	unsigned long long macvalue;
 	char macbuf[13];
 
+	return 1;
+
+/*
 	if (!macaddr || !strlen(macaddr))
 		return 0;
 
@@ -1461,4 +1464,5 @@ int mssid_mac_validate(const char *macaddr)
 		return 0;
 	else
 		return 1;
+*/
 }
