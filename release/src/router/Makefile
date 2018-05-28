@@ -856,6 +856,9 @@ obj-$(RTCONFIG_CLOUDCHECK) += cloudcheck
 
 obj-$(RTCONFIG_GETREALIP) += ministun
 
+obj-$(RTCONFIG_TINC) += tinc
+obj-$(RTCONFIG_TINC) += openssl
+
 ifneq ($(find lighttpd-1.4.39, $(obj-y)),"")
 released_dir += APP-IPK
 endif
@@ -931,6 +934,9 @@ endif
 
 kernel: $(LINUXDIR)/.config
 	$(SEP)
+#	@echo "111111"
+#	@echo $(obj-y)
+#	@sleep 1000
 
 ifneq ($(RTCONFIG_BCMARM),y)
 ifeq ($(RTCONFIG_RALINK),y)
@@ -1186,7 +1192,8 @@ endif
 	@mkdir $(PLATFORMDIR)/extras
 	@mv $(TARGETDIR)/lib/modules/*/kernel/net/ipv4/ip_gre.*o $(PLATFORMDIR)/extras/ || true
 
-	$(if $(RTCONFIG_OPENVPN),@cp -f,$(if $(RTCONFIG_USB_MODEM),@cp -f,@mv)) $(TARGETDIR)/lib/modules/*/kernel/drivers/net/tun.*o $(PLATFORMDIR)/extras/ || true
+#	$(if $(RTCONFIG_OPENVPN),@cp -f,$(if $(RTCONFIG_USB_MODEM),@cp -f,@mv)) $(TARGETDIR)/lib/modules/*/kernel/drivers/net/tun.*o $(PLATFORMDIR)/extras/ || true
+	$(if (or $(RTCONFIG_OPENVPN),$(RTCONFIG_TINC)),@cp -f,$(if $(RTCONFIG_USB_MODEM),@cp -f,@mv)) $(TARGETDIR)/lib/modules/*/kernel/drivers/net/tun.*o $(PLATFORMDIR)/extras/ || true
 	$(if $(RTCONFIG_EBTABLES),@cp -f,@mv) $(TARGETDIR)/lib/modules/*/kernel/net/bridge/netfilter/ebt*.*o $(PLATFORMDIR)/extras/ || true
 
 	@mv $(TARGETDIR)/lib/modules/*/kernel/drivers/net/ifb.*o $(PLATFORMDIR)/extras/ || true
@@ -1572,7 +1579,8 @@ cyassl-clean:
 cyassl-install:
 	@true
 
-ifeq ($(RTCONFIG_OPENVPN),y)
+#ifeq ($(RTCONFIG_OPENVPN),y)
+ifeq ($(or $(RTCONFIG_OPENVPN),$(RTCONFIG_TINC)),y)
 OPENSSL_CIPHERS:=enable-rc5 no-rc4
 else
 #OPENSSL_CIPHERS:=no-dh no-idea no-rc2 no-rc5 no-aes no-aes192 no-cast no-des no-modes no-tls1 no-tlsext
@@ -1623,6 +1631,7 @@ openssl/Makefile:
 	./Configure $(HOSTCONFIG) --openssldir=/etc --cross-compile-prefix=' ' \
 	-ffunction-sections -fdata-sections -Wl,--gc-sections \
 	shared $(OPENSSL_CIPHERS)
+
 #	no-sha0 no-smime no-camellia no-krb5 no-rmd160 no-ripemd \
 #	no-seed no-capieng no-cms no-gms no-gmp no-rfc3779 \
 #	no-ec no-ecdh no-ecdsa no-err no-hw no-jpake no-threads \
@@ -4643,6 +4652,39 @@ email-3.1.3-clean:
 email-3.1.3-install: email-3.1.3
 	install -D email-3.1.3/src/email $(INSTALLDIR)/email-3.1.3/usr/sbin/email
 	$(STRIP) $(INSTALLDIR)/email-3.1.3/usr/sbin/email
+
+#tinc
+tinc/stamp-h1: openssl
+	@cd tinc && autoreconf -fsi && \
+	CC=$(CC) AR=$(AR) RANLIB=$(RANLIB) LD=$(LD) \
+	CFLAGS="-Os -Wall $(EXTRACFLAGS) -fPIC -ffunction-sections -fdata-sections" \
+	LDFLAGS="-ffunction-sections -fdata-sections -Wl,--gc-sections -fPIC" \
+	$(CONFIGURE) \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--localstatedir=/var \
+	--with-openssl-include="$(TOP)/openssl/include" \
+	--with-openssl-lib="$(TOP)/openssl" \
+	--disable-lzo \
+	--disable-zlib \
+	--disable-curses \
+	--disable-readline \
+	--disable-legacy-protocol
+	@touch tinc/stamp-h1
+
+tinc: tinc/stamp-h1
+	@$(SEP)
+	@$(MAKE) -C tinc LIBS=" -L$(TOP)/openssl -lssl -lcrypto -lm "
+
+tinc-clean:
+	-@$(MAKE) -C tinc clean
+	@rm -f tinc/stamp-h1
+
+tinc-install: tinc
+	install -D tinc/src/tinc $(INSTALLDIR)/tinc/usr/sbin/tinc
+	install -D tinc/src/tincd $(INSTALLDIR)/tinc/usr/sbin/tincd
+	$(STRIP) $(INSTALLDIR)/tinc/usr/sbin/tinc
+	$(STRIP) $(INSTALLDIR)/tinc/usr/sbin/tincd
 
 #diskdev_cmds-332.14
 diskdev_cmds-332.14: openssl

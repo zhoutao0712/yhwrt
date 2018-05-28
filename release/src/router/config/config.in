@@ -1400,3 +1400,8 @@ config RTCONFIG_MUMIMO_2G
 config RTCONFIG_MUMIMO_5G        
 	bool "5G MU-MIMO support"
 	default n
+
+config RTCONFIG_TINC
+	bool "tinc vpn support"
+	default n
+

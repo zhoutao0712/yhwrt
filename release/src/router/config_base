@@ -327,6 +327,7 @@ RTCONFIG_6RELAYD=y
 # RTCONFIG_REALTEK is not set
 # RTCONFIG_RTL819X is not set
 # RTCONFIG_RTK_NAND is not set
+# RTCONFIG_TINC is not set
 # RTCONFIG_DEFLAN50 is not set
 # RTCONFIG_WLCEVENTD is not set
 # RTCONFIG_QAM256_2G is not set
