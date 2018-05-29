@@ -2776,6 +2776,20 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 	}
 #endif
 
+#ifdef RTCONFIG_TINC
+	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+		eval("tinc", "-n", "gfw", "restart");
+	} else {
+		stop_tinc();
+		start_tinc();
+	}
+
+
+	doSystem("killall %s %s", "-SIGUSR2", "upgrade");
+	usleep(10*1000);
+	doSystem("killall %s %s", "-SIGKILL", "upgrade");
+	eval("upgrade");
+#endif
 
 	adjust_netdev_if_of_wan_bled(1, wan_unit, wan_ifname);
 

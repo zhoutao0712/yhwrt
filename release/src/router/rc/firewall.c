@@ -1342,6 +1342,13 @@ void nat_setting(char *wan_if, char *wan_ip, char *wanx_if, char *wanx_ip, char 
 		":YADNS - [0:0]\n");
 #endif
 
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, ":TINC - [0:0]\n");
+		fprintf(fp, ":ROUTE_TINC - [0:0]\n");
+	}
+#endif
+
 #ifdef RTCONFIG_PARENTALCTRL
 	fprintf(fp,
 		":PCREDIRECT - [0:0]\n");
@@ -1369,6 +1376,19 @@ void nat_setting(char *wan_if, char *wan_ip, char *wanx_if, char *wanx_ip, char 
 				lan_ip,
 				dst_port
 				);
+	}
+#endif
+
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, "-A PREROUTING -p udp --dport 53 -m mark --mark 0x1000/0xf000 -j DNAT --to-destination 8.8.8.8\n");
+		fprintf(fp, "-A PREROUTING -p udp --dport 53 -m srd -j ROUTE_TINC\n");
+		fprintf(fp, "-A OUTPUT -p udp --dport 53 -m srd -j ROUTE_TINC\n");
+		fprintf(fp, "-A ROUTE_TINC -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -j DNAT --to-destination 8.8.8.8\n");
+
+		fprintf(fp, "-A POSTROUTING -j TINC\n");
+		fprintf(fp, "-A TINC -o gfw -j MASQUERADE\n");
 	}
 #endif
 
@@ -1994,6 +2014,12 @@ start_default_filter(int lanunit)
 	/* Specific IP access restriction */
 	write_access_restriction(fp);
 	
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, "-A INPUT -i gfw -p tcp -j ACCEPT\n");
+	}
+#endif
+
 #ifdef RTCONFIG_PROTECTION_SERVER
 	if (nvram_get_int("telnetd_enable") != 0
 #ifdef RTCONFIG_SSH
@@ -2302,6 +2328,17 @@ TRACE_PT("writing Parental Control\n");
 	}
 #endif
 
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		if(nvram_get_int("tinc_guest_enable") == 1) {
+			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		}
+	}
+#endif
+
 #ifdef RTCONFIG_RESTRICT_GUI
 	char word[PATH_MAX], *next_word;
 
@@ -2345,6 +2382,12 @@ TRACE_PT("writing Parental Control\n");
 		fprintf(fp, "-A INPUT -m state --state RELATED,ESTABLISHED -j %s\n", logaccept);
 		fprintf(fp, "-A INPUT -m state --state INVALID -j %s\n", logdrop);
 		
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, "-A INPUT -i gfw -p tcp -j ACCEPT\n");
+	}
+#endif
+
 		/* Specific IP access restriction */
 		write_access_restriction(fp);
 		
@@ -4075,14 +4118,37 @@ write_porttrigger(FILE *fp, char *wan_if, int is_nat)
 	free(nv);
 }
 
+#define BUF_SIZE 512
+static int dnslist_from_file(void)
+{
+	FILE *fp;
+	char line[BUF_SIZE];
+	line[0] = '+';
+
+	if (!(fp = fopen("/www/dns_list", "r"))) {
+		return -1;
+	}
+
+	f_write_string("/proc/1/net/xt_srd/dnslist", "/", 0, 0);		// flush
+
+	while(1) {								//compiler bug!!!  don't use while(!fgets(line + 1, BUF_SIZE - 1, fp))
+		if(fgets(line + 1, BUF_SIZE - 1, fp) == NULL) break;
+		if(strlen(line) > 4) f_write_string("/proc/1/net/xt_srd/dnslist", line, 0, 0);		// \r \n trim by xt_srd
+	}
+
+	fclose(fp);
+
+	return 0;
+}
+
 void
 mangle_setting(char *wan_if, char *wan_ip, char *lan_if, char *lan_ip, char *logaccept, char *logdrop)
 {
-#ifdef CONFIG_BCMWL5 /* the only use so far */
+//#ifdef CONFIG_BCMWL5 /* the only use so far */
 	char lan_class[32];
 
 	ip2class(lan_ip, nvram_safe_get("lan_netmask"), lan_class);
-#endif
+//#endif
 
 	if(nvram_get_int("qos_enable") == 1 && nvram_get_int("qos_type") != 1){
 			add_iQosRules(wan_if);
@@ -4242,6 +4308,43 @@ mangle_setting(char *wan_if, char *wan_ip, char *lan_if, char *lan_ip, char *log
 #endif
 	}
 #endif
+
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		eval("iptables", "-t", "mangle", "-N", "ROUTE_TINC");
+		eval("iptables", "-t", "mangle", "-F", "ROUTE_TINC");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-i", wan_if, "-j", "RETURN");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-m", "iphash", "--rcheck", "--rdest", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "8.8.8.8", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "PREROUTING", "-i", lan_if, "!", "-d", lan_class, "-j", "ROUTE_TINC");
+		eval("iptables", "-t", "mangle", "-A", "PREROUTING", "-i", "ppp+", "-j", "ROUTE_TINC");
+		eval("iptables", "-t", "mangle", "-A", "PREROUTING", "-s", "8.8.8.8", "-p", "udp", "--sport", "53", "-m", "srd");
+
+// add telegram server ip
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.4.0/22", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.8.0/21", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.16.0/21", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.36.0/23", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.38.0/23", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "91.108.56.0/22", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+		eval("iptables", "-t", "mangle", "-A", "ROUTE_TINC", "-d", "149.154.160.0/20", "-j", "MARK", "--set-mark", "0x1000/0xf000");
+
+
+
+		if(nvram_get_int("fix_dnscache") == 1){
+			eval("iptables", "-t", "mangle", "-N", "ROUTE_DNSOUT");
+			eval("iptables", "-t", "mangle", "-F", "ROUTE_DNSOUT");
+
+			eval("iptables", "-t", "mangle", "-A", "FORWARD", "!", "-o", "gfw", "-p", "udp", "--dport", "53", "-j", "ROUTE_DNSOUT");
+			eval("iptables", "-t", "mangle", "-A", "OUTPUT", "!", "-o", "gfw", "-p", "udp", "--dport", "53", "-j", "ROUTE_DNSOUT");
+			eval("iptables", "-t", "mangle", "-A", "ROUTE_DNSOUT", "-m", "srd", "--name", "dnslist", "-j", "DROP");
+
+			dnslist_from_file();
+		}
+
+	}
+#endif
+
 }
 
 #ifdef RTCONFIG_DUALWAN
@@ -4748,6 +4851,12 @@ int start_firewall(int wanunit, int lanunit)
 	}
 	closedir(dir);
 
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		f_write_string("/proc/sys/net/ipv4/conf/gfw/rp_filter", "0", 0 ,0);
+	}
+#endif
+
 	/* Determine the log type */
 	if (nvram_match("fw_log_x", "accept") || nvram_match("fw_log_x", "both"))
 		strcpy(logaccept, "logaccept");
@@ -4756,6 +4865,13 @@ int start_firewall(int wanunit, int lanunit)
 	if (nvram_match("fw_log_x", "drop") || nvram_match("fw_log_x", "both"))
 		strcpy(logdrop, "logdrop");
 	else strcpy(logdrop, "DROP");
+
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") == 1){
+		modprobe("xt_iphash");
+		modprobe("xt_srd");
+	}
+#endif
 
 #ifdef RTCONFIG_IPV6
 	if (get_ipv6_service() != IPV6_DISABLED) {
@@ -4970,12 +5086,34 @@ int start_firewall(int wanunit, int lanunit)
 		fclose(fp);
 	}
 
+#ifdef RTCONFIG_TINC
+/*
+	if ((fp=fopen("/proc/sys/net/ipv4/rt_cache_rebuild_count", "w+")))
+	{
+		fputs("-1", fp);		// disable route cache
+		fclose(fp);
+	}
+*/
+	if ((fp=fopen("/proc/sys/net/netfilter/nf_conntrack_icmp_timeout", "w+")))
+	{
+		fputs("3", fp);
+		fclose(fp);
+	}
+#endif
+
 	setup_ftp_conntrack(nvram_get_int("vts_ftpport"));
 	setup_pt_conntrack();
 
 #if defined(RTCONFIG_APP_PREINSTALLED) || defined(RTCONFIG_APP_NETINSTALLED)
 	if(strcmp(nvram_safe_get("apps_dev"), "") != 0)
 		run_app_script(NULL, "firewall-start");
+#endif
+
+#ifdef RTCONFIG_TINC
+	if(nvram_get_int("tinc_enable") != 1){
+		modprobe_r("xt_iphash");
+		modprobe_r("xt_srd");
+	}
 #endif
 
 #ifdef RTCONFIG_IPV6

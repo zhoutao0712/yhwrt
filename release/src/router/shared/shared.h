@@ -1515,4 +1515,6 @@ extern int wanport_status(int wan_unit);
 extern void deauth_guest_sta(char *, char *);
 #endif
 
+extern char *get_router_mac(void);
+
 #endif	/* !__SHARED_H__ */

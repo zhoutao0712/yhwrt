@@ -437,6 +437,10 @@ ifeq ($(RTCONFIG_TUNNEL),y)
 OBJS += natnl_api.o
 endif
 
+ifeq ($(RTCONFIG_TINC),y)
+OBJS += tinc.o
+endif
+
 ifneq ($(RTCONFIG_RALINK)$(RTCONFIG_QCA)$(RTCONFIG_REALTEK),y)
 OBJS += erp_monitor.o
 endif
@@ -700,6 +704,11 @@ endif
 
 ifneq ($(RTCONFIG_RALINK)$(RTCONFIG_QCA)$(RTCONFIG_REALTEK),y)
 	@cd $(INSTALLDIR)/sbin && ln -sf rc erp_monitor
+endif
+
+ifeq ($(RTCONFIG_TINC),y)
+	@cd $(INSTALLDIR)/sbin && ln -sf rc tinc_start
+	@cd $(INSTALLDIR)/sbin && ln -sf rc guest_id
 endif
 
 clean:

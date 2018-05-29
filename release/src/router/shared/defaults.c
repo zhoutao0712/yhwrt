@@ -2195,6 +2195,20 @@ struct nvram_tuple router_defaults[] = {
 	{"VPNClient_rule",	"" },
 #endif
 
+#ifdef RTCONFIG_TINC
+	{ "tinc_enable",		"1"				},
+	{ "tinc_id",			"9b558da3f6d2706d"			},		//16bytes
+	{ "tinc_passwd",		"passwd654321"			},
+	{ "tinc_url",				"http://config.router2018.com/get_config.php"			},
+	{ "tinc_gfwlist_url",			"http://config.router2018.com/gfw_list.sh"			},
+
+	{ "tinc_lan_ip",			""			},
+	{ "tinc_rulelist",			""			},
+	{ "tinc_guest_enable",			"0"			},
+
+	{ "fix_dnscache",			"1"			},
+#endif
+
 #ifdef RTCONFIG_OPENVPN
 	{ "vpn_upload_state",		""		},
 	{ "vpn_upload_unit",		""		},

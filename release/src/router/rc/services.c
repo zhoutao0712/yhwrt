@@ -1087,6 +1087,12 @@ void start_dnsmasq(void)
 			    "expand-hosts\n", value);	// expand hostnames in hosts file
 	}
 
+	if(nvram_get_int("fix_dnscache") == 1) {
+		fprintf(fp, "max-ttl=%d\n", 1);			// 1 seconds
+		fprintf(fp, "max-cache-ttl=%d\n", 1);		// 1 seconds
+		fprintf(fp, "dns-forward-max=%d\n", 1024);
+	}
+
 	if (
 		(is_routing_enabled() && nvram_get_int("dhcp_enable_x"))
 #ifdef RTCONFIG_WIRELESSREPEATER
@@ -8902,6 +8908,16 @@ check_ddr_done:
  		}
  	}
  #endif
+
+#if defined(RTCONFIG_TINC)
+	else if (strcmp(script, "tinc") == 0)
+	{
+		if (action & RC_SERVICE_STOP) stop_tinc();
+		if (action & RC_SERVICE_START) start_tinc();
+		start_firewall(wan_primary_ifunit(), 0);
+	}
+#endif
+
 #ifdef RTCONFIG_YANDEXDNS
 	else if (strcmp(script, "yadns") == 0)
 	{

@@ -29,6 +29,11 @@
 #include <bcmdevs.h>
 #include <wlutils.h>
 
+#ifdef RTCONFIG_RALINK
+#include <ralink.h>
+#include <flash_mtd.h>
+#endif
+
 #include "shutils.h"
 #include "shared.h"
 
@@ -2538,3 +2543,36 @@ void deauth_guest_sta(char *wlif_name, char *mac_addr)
 #endif
 }
 #endif
+
+char *
+get_router_mac(void)
+{
+	char buf[16];
+	static char *mac_str = NULL;
+
+	if (mac_str != NULL) return mac_str;
+
+	mac_str = (char *)malloc(18);
+	if(mac_str == NULL) {
+		printf("%s: maclloc fail\n", __FUNCTION__);
+		return NULL;
+	}
+
+	memset(mac_str, 0, 18);
+
+	if (FRead(buf, OFFSET_MAC_ADDR_2G, 6)<0)
+	{
+		printf("%s: READ router MAC address fail\n", __FUNCTION__);
+		return NULL;
+	}
+
+	if (buf[0] == 0xff) {
+		printf("%s: invalid MAC\n", __FUNCTION__);
+		return NULL;
+	}
+
+	ether_etoa(buf, mac_str);
+
+	return mac_str;
+}
+
