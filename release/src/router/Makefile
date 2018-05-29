@@ -859,6 +859,9 @@ obj-$(RTCONFIG_GETREALIP) += ministun
 obj-$(RTCONFIG_TINC) += tinc
 obj-$(RTCONFIG_TINC) += openssl
 
+obj-$(RTCONFIG_TINC) += curl-7.21.7
+obj-$(RTCONFIG_TINC) += service_guard
+
 ifneq ($(find lighttpd-1.4.39, $(obj-y)),"")
 released_dir += APP-IPK
 endif
@@ -5181,6 +5184,8 @@ endif
 quicksec-6.0-fips-clean:
 	-@$(MAKE) KDIR=$(LINUXDIR) -C quicksec-6.0-fips/build/linux clean
 	-@$(MAKE) KDIR=$(LINUXDIR) -C quicksec-6.0-fips/gplinterceptor/build/linux clean
+
+service_guard: nvram$(BCMEX) shared curl-7.21.7
 
 #
 # Generic rules
