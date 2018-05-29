@@ -1462,6 +1462,13 @@ function remove_url(){
 		tabtitle[15][2] = "";
 		tablink[15][2] = "";
 	}
+
+//hide IPv6
+	menuL2_title[6] = "";
+	menuL2_link[6] = "";
+	remove_menu_item("Advanced_IPv6_Content.asp");
+	remove_menu_item("Advanced_Firewall_IPv6_Content.asp");
+	remove_menu_item("Main_IPV6Status_Content.asp");
 }
 
 function remove_menu_item(remove_url){
