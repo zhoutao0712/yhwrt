@@ -1865,6 +1865,13 @@ define RouterOptions
 		sed -i "/RTCONFIG_TINC/d" $(1); \
 		echo "RTCONFIG_TINC=y" >>$(1); \
 	fi; \
+	if [ "$(TCODE)" = "y" ]; then \
+		sed -i "/RTCONFIG_TCODE/d" $(1); \
+		echo "RTCONFIG_TCODE=y" >>$(1); \
+	else \
+		sed -i "/RTCONFIG_TCODE/d" $(1); \
+		echo "# RTCONFIG_TCODE is not set" >>$(1); \
+	fi; \
 	)
 	$(call platformRouterOptions, $(1))
 endef
