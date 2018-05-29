@@ -1371,8 +1371,10 @@ void init_syspara(void)
 	{
 		_dprintf("Read REG2G_EEPROM_ADDR fail or invalid value\n");
 		nvram_set("wl_country_code", "");
-		nvram_set("wl0_country_code", "DB");
-		nvram_set("wl_reg_2g", "2G_CH14");
+//		nvram_set("wl0_country_code", "DB");
+//		nvram_set("wl_reg_2g", "2G_CH14");
+		nvram_set("wl0_country_code", "US");
+		nvram_set("wl_reg_2g", "2G_CH11");
 	}
 	else
 	{
@@ -1402,8 +1404,10 @@ void init_syspara(void)
 	{
 		_dprintf("Read REG5G_EEPROM_ADDR fail or invalid value\n");
 		nvram_set("wl_country_code", "");
-		nvram_set("wl1_country_code", "DB");
-		nvram_set("wl_reg_5g", "5G_ALL");
+//		nvram_set("wl1_country_code", "DB");
+//		nvram_set("wl_reg_5g", "5G_ALL");
+		nvram_set("wl1_country_code", "CN");
+		nvram_set("wl_reg_5g", "5G_BAND4");
 	}
 	else
 	{
