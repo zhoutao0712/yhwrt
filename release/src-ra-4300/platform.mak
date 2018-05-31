@@ -473,6 +473,12 @@ define platformKernelConfig
 				echo "# CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA is not set" >>$(1); \
 			fi; \
 		fi; \
+		if [ "$(WR1200JS)" = "y" ]; then \
+			sed -i "/CONFIG_MT7603E_INTERNAL_PA_EXTERNAL_LNA/d" $(1); \
+			echo "# CONFIG_MT7603E_INTERNAL_PA_EXTERNAL_LNA is not set" >>$(1); \
+			sed -i "/CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA/d" $(1); \
+			echo "# CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA is not set" >>$(1); \
+		fi; \
 	fi; \
 	if [ "$(SECOND_IF)" = "MT7612E" ]  && [ "$(RPAC56)" = "" ] ; then \
 		sed -i "/CONFIG_RLT_WIFI/d" $(1); \
@@ -581,6 +587,16 @@ define platformKernelConfig
 			echo "# CONFIG_SECOND_CARD_EXTERNAL_PA is not set " >>$(1); \
 			sed -i "/CONFIG_SECOND_CARD_EXTERNAL_LNA/d" $(1); \
 			echo "# CONFIG_SECOND_CARD_EXTERNAL_LNA is not set" >>$(1); \
+		fi; \
+		if [ "$(WR1200JS)" = "y" ]; then \
+			sed -i "/CONFIG_FIRST_CARD_EXTERNAL_PA/d" $(1); \
+			echo "# CONFIG_FIRST_CARD_EXTERNAL_PA is not set" >>$(1); \
+			sed -i "/CONFIG_FIRST_CARD_EXTERNAL_LNA/d" $(1); \
+			echo "# CONFIG_FIRST_CARD_EXTERNAL_LNA is not set " >>$(1); \
+			sed -i "/CONFIG_SECOND_CARD_EXTERNAL_PA/d" $(1); \
+			echo "CONFIG_SECOND_CARD_EXTERNAL_PA=y " >>$(1); \
+			sed -i "/CONFIG_SECOND_CARD_EXTERNAL_LNA/d" $(1); \
+			echo "CONFIG_SECOND_CARD_EXTERNAL_LNA=y" >>$(1); \
 		fi; \
 		if [ "$(RTAC1200GA1)" = "y" ] || [ "$(RTAC1200GU)" = "y" ] ; then \
 			sed -i "/CONFIG_RA_HW_NAT_IPV6/d" $(1); \
