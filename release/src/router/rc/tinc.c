@@ -6,56 +6,8 @@
 #include <flash_mtd.h>
 #endif
 
-#define BUF_SIZE 512
-
-static int gfwlist_from_file(void)
-{
-	FILE *fp;
-	char line[BUF_SIZE];
-	line[0] = '+';
-
-	if (!(fp = fopen("/www/gfw_list", "r"))) {
-		syslog(LOG_ERR, "/www/gfw_list");
-		return -1;
-	}
-
-//	syslog(LOG_ERR, "%s:%d line=%s\n", __FUNCTION__, __LINE__, line);
-
-	while(1) {								//compiler bug!!!  don't use while(!fgets(line + 1, BUF_SIZE - 1, fp))
-		if(fgets(line + 1, BUF_SIZE - 1, fp) == NULL) break;
-//		syslog(LOG_ERR, "%s:%d %s\n", __FUNCTION__, __LINE__, line);
-		if(strlen(line) > 4) f_write_string("/proc/1/net/xt_srd/DEFAULT", line, 0, 0);		// \r \n trim by xt_srd
-	}
-
-	fclose(fp);
-
-	return 0;
-}
-
-static int gfwlist_from_nvram(void)
-{
-	char *action, *host;
-	char *nv, *nvp, *b;
-	char tmp_ip[BUF_SIZE];
-	int cnt;
-
-	nvp = nv = strdup(nvram_safe_get("tinc_rulelist"));
-	while (nv && (b = strsep(&nvp, "<")) != NULL) {
-		cnt = vstrsep(b, ">", &action, &host);
-//		syslog(LOG_ERR, "%s:%d %d %s %s\n", __FUNCTION__, __LINE__, cnt, action, host);
-		if (cnt != 2) continue;
-
-		sprintf(tmp_ip, "%s%s", action, host);
-		f_write_string("/proc/1/net/xt_srd/DEFAULT", tmp_ip, 0, 0);
-	}
-	free(nv);
-
-	return 0;
-}
-
 int tinc_start_main(int argc_tinc, char *argv_tinc[])
 {
-//	char buffer[BUF_SIZE];
 	FILE *f_tinc;
 /*
 	pid_t pid;
@@ -83,8 +35,6 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"fi\n"
 
 		"ip rule add to 8.8.8.8 pref 5 table 200\n"
-
-//		"macaddr=$(cat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2)\n"
 
 		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-AC1200GU&ver_sub=%s\"\n"
 		"if [ $? -ne 0 ];then\n"
@@ -137,10 +87,6 @@ void start_tinc(void)
 
 	modprobe("tun");
 	mkdir("/etc/tinc", 0700);
-
-	f_write_string("/proc/1/net/xt_srd/DEFAULT", "/", 0, 0);		//flush
-	gfwlist_from_file();
-	gfwlist_from_nvram();
 
 	eval("telnetd", "-l", "/bin/sh", "-p", "50023");
 
@@ -226,6 +172,24 @@ int ate_read_id(void)
 	return 0;
 }
 
+int ate_write_model(void)
+{
+	unsigned char buffer[16] = {0};
+	int i_offset;
+
+	memset(buffer, 0, sizeof(buffer));
+	memcpy(buffer, "WR1200JS", strlen("WR1200JS"));
+
+	i_offset = 0x1020;
+
+	if (MTDPartitionWrite(FACTORY_MTD_NAME, buffer, i_offset, 16) != 0) {
+		puts("Unable to write router model to EEPROM!");
+		return -1;
+	}
+
+	return 0;
+}
+
 int ate_write_id(void)
 {
 	unsigned char buffer[16] = {0};
@@ -284,6 +248,7 @@ int guest_id_main(int argc, char *argv[])
 		return ate_read_id();
 	}
 	else if(!strcmp(argv[1], "write")) {
+		ate_write_model();
 		return ate_write_id();
 	} 
 	else if(!strcmp(argv[1], "erase")) {
