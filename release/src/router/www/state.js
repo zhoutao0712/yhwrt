@@ -1469,6 +1469,10 @@ function remove_url(){
 	remove_menu_item("Advanced_IPv6_Content.asp");
 	remove_menu_item("Advanced_Firewall_IPv6_Content.asp");
 	remove_menu_item("Main_IPV6Status_Content.asp");
+
+//hide WPS WDS
+	remove_menu_item("Advanced_WWPS_Content.asp");
+	remove_menu_item("Advanced_WMode_Content.asp");
 }
 
 function remove_menu_item(remove_url){
