@@ -297,7 +297,10 @@ ifneq ($(RTCONFIG_ACCEL_PPTPD), y)
 endif
 ifneq ($(RTCONFIG_VPNC), y)	
 	rm -rf $(INSTALLDIR)/www/Advanced_VPNClient_Content.asp
-endif	
+endif
+ifneq ($(RTCONFIG_TINC), y)
+	rm -rf $(INSTALLDIR)/www/Advanced_TINC_Content.asp
+endif
 endif
 ifneq ($(RTCONFIG_TIMEMACHINE),y)
 	rm -rf $(INSTALLDIR)/www/Advanced_TimeMachine.asp
@@ -501,3 +504,26 @@ ifneq ($(RTCONFIG_FBWIFI), y)
 	rm -rf $(INSTALLDIR)/www/ajax_fbwifi.asp
 	rm -rf $(INSTALLDIR)/www/fbwifi
 endif
+
+# remove some *.dict
+	rm -rf $(INSTALLDIR)/www/BR.dict
+	rm -rf $(INSTALLDIR)/www/CZ.dict
+	rm -rf $(INSTALLDIR)/www/DA.dict
+	rm -rf $(INSTALLDIR)/www/DE.dict
+#	rm -rf $(INSTALLDIR)/www/EN.dict
+	rm -rf $(INSTALLDIR)/www/ES.dict
+	rm -rf $(INSTALLDIR)/www/FI.dict
+	rm -rf $(INSTALLDIR)/www/FR.dict
+	rm -rf $(INSTALLDIR)/www/HU.dict
+	rm -rf $(INSTALLDIR)/www/IT.dict
+	rm -rf $(INSTALLDIR)/www/MS.dict
+	rm -rf $(INSTALLDIR)/www/NO.dict
+	rm -rf $(INSTALLDIR)/www/PL.dict
+	rm -rf $(INSTALLDIR)/www/RO.dict
+	rm -rf $(INSTALLDIR)/www/RU.dict
+	rm -rf $(INSTALLDIR)/www/SV.dict
+	rm -rf $(INSTALLDIR)/www/TH.dict
+	rm -rf $(INSTALLDIR)/www/TR.dict
+#	rm -rf $(INSTALLDIR)/www/TW.dict
+	rm -rf $(INSTALLDIR)/www/UK.dict
+
