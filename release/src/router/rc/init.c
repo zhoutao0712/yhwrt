@@ -3005,16 +3005,16 @@ int init_nvram(void)
 		nvram_set("lan_ifname", "br0");
 		set_basic_ifname_vars("eth3", "vlan1", "ra0", "rai0", "usb", "vlan1", NULL, "vlan3", NULL, 0);
 
-		nvram_set_int("btn_rst_gpio",  41|GPIO_ACTIVE_LOW);
-		nvram_set_int("btn_wps_gpio",  43|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_usb_gpio", 47|GPIO_ACTIVE_LOW);
+		nvram_set_int("btn_rst_gpio",  3|GPIO_ACTIVE_LOW);
+		nvram_set_int("btn_wps_gpio",  12|GPIO_ACTIVE_LOW);
+		nvram_set_int("led_usb_gpio", 8|GPIO_ACTIVE_LOW);
 		nvram_set_int("led_pwr_gpio", 48|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_wps_gpio",  48|GPIO_ACTIVE_LOW);
+		nvram_set_int("led_wps_gpio",  7|GPIO_ACTIVE_LOW);
 		nvram_set_int("led_5g_gpio", 15|GPIO_ACTIVE_LOW);
 		nvram_set_int("led_2g_gpio", 14|GPIO_ACTIVE_LOW);
 		nvram_set_int("led_all_gpio", 46|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_lan_gpio", 7|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_wan_gpio", 16|GPIO_ACTIVE_LOW);
+//		nvram_set_int("led_lan_gpio", 7|GPIO_ACTIVE_LOW);
+//		nvram_set_int("led_wan_gpio", 16|GPIO_ACTIVE_LOW);
 		eval("rtkswitch", "11");
 
 		nvram_set("ehci_ports", "1-2");
