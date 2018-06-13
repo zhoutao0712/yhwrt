@@ -13,6 +13,10 @@
 #include <dirent.h>
 #include <string.h>
 #include <time.h>
+#include <openssl/bio.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/evp.h>
 
 // Line number as text string
 #define __LINE_T__ __LINE_T_(__LINE__)
@@ -45,6 +49,75 @@ static int ovpn_waitfor(const char *name)
 		sleep(1);
 	}
 	return (pid >= 0);
+}
+
+static int ovpn_verify_crt(int serverNum)
+{
+	char buf[4096];
+	char name[32];
+	char fpath[128];
+	int valid = 0;
+	BIO *crtbio = NULL;
+	X509 *x509data = NULL;
+	X509_STORE *store = NULL;
+	X509_STORE_CTX *ctx = NULL;
+	int ret = 0;
+
+	OpenSSL_add_all_algorithms();
+
+	//Load the certificate
+	snprintf(name, sizeof(name), "vpn_crt_server%d_client_crt", serverNum);
+	get_parsed_crt(name, buf, sizeof(buf));
+	crtbio = BIO_new(BIO_s_mem());
+	ret = BIO_write(crtbio, buf, strlen(buf));
+	if(ret <= 0) {
+		goto end;
+	}
+	x509data = PEM_read_bio_X509(crtbio, NULL, 0, NULL);
+	if(x509data == NULL) {
+		goto end;
+	}
+
+	//Load the CA
+	//already in /etc/openvpn/server%d/ca.crt
+	snprintf(fpath, sizeof(fpath), "/etc/openvpn/server%d/ca.crt", serverNum);
+	store = X509_STORE_new();
+	if(store == NULL) {
+		goto end;
+	}
+	ret = X509_STORE_load_locations(store, fpath, NULL);
+	if (ret != 1) {
+		goto end;
+	}
+
+	//Check the certficate
+	ctx = X509_STORE_CTX_new();
+	if(ctx == NULL) {
+		goto end;
+	}
+	if(!X509_STORE_CTX_init(ctx, store, x509data, NULL)) {
+		goto end;
+	}
+	ret = X509_verify_cert(ctx);
+	if(ret > 0) {
+		valid = 1;
+	}
+	else if(ctx->error == X509_V_ERR_CERT_NOT_YET_VALID) {
+		valid = 2;
+	}
+	else {
+		cprintf("error: %s\n", X509_verify_cert_error_string(ctx->error));
+	}
+
+end:
+	if(crtbio)
+		BIO_free(crtbio);
+	if(store)
+		X509_STORE_free(store);
+	if(ctx)
+		X509_STORE_CTX_free(ctx);
+
+	return valid;
 }
 
 void start_vpnclient(int clientNum)
@@ -1156,6 +1229,7 @@ void start_vpnserver(int serverNum)
 			 * the CA was changed by the user and the current client crt/key no longer match,
 			 * so we should not insert them in the exported client ovpn file.
 			 */
+#if 0
 			fp = fopen("/tmp/test.crt", "w");
 			sprintf(&buffer[0], "vpn_crt_server%d_client_crt", serverNum);
 			fprintf(fp, "%s", get_parsed_crt(&buffer[0], buffer2, sizeof(buffer2)));
@@ -1168,6 +1242,10 @@ void start_vpnserver(int serverNum)
 
 			if (!strncmp(&buffer[0],"/tmp/test.crt: OK",17))
 				valid = 1;
+#else
+			if (ovpn_verify_crt(serverNum))
+				valid = 1;
+#endif
 
 			fprintf(fp_client, "<cert>\n");
 			sprintf(&buffer[0], "vpn_crt_server%d_client_crt", serverNum);

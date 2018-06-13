@@ -2502,11 +2502,10 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 	char prefix_x[] = "wanXXXXXXXXX_";
 	char *wan_proto, *gateway;
 	int wan_unit;
-	char wan_ifname[16] = {0};
+	char wan_ifname[16];
 
-	strncpy(wan_ifname, pwan_ifname, 16); // avoid *pwan_ifname value is be modfied after do_dns_detect.
-	wan_ifname[15] = "\0"; // avoid segment fault. 
-	
+	/* Value of pwan_ifname can be modfied after do_dns_detect */
+	strlcpy(wan_ifname, pwan_ifname, sizeof(wan_ifname));
 	_dprintf("%s(%s)\n", __FUNCTION__, wan_ifname);
 
 	/* Figure out nvram variable name prefix for this i/f */
@@ -3532,7 +3531,9 @@ int autodet_main(int argc, char *argv[]){
 	int unit;
 	char prefix[]="wanXXXXXX_", tmp[100];
 	char prefix2[]="autodetXXXXXX_", tmp2[100];
+#if 0
 	char hwaddr_x[32];
+#endif
 	int status;
 
 	f_write_string("/tmp/detect_wrong.log", "", 0, 0);
@@ -3601,6 +3602,8 @@ int autodet_main(int argc, char *argv[]){
 
 		nvram_set_int(strcat_r(prefix2, "state", tmp2), AUTODET_STATE_CHECKING);
 
+// remove the Auto MAC clone from the decision on 2018/4/11.
+#if 0
 		dumparptable();
 
 		// backup hwaddr_x
@@ -3647,6 +3650,7 @@ int autodet_main(int argc, char *argv[]){
 			nvram_set_int(strcat_r(prefix2, "state", tmp2), AUTODET_STATE_FINISHED_OK);
 		}
 		nvram_commit();
+#endif
 	}
 
 	return 0;

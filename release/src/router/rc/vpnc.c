@@ -133,7 +133,6 @@ start_vpnc(void)
 		} else
 		if (nvram_match(strcat_r(prefix, "pptp_options_x", tmp), "+mppe-56")) {
 			fprintf(fp, "nomppe-40\n"
-				    "nomppe-128\n"
 				    "require-mppe\n"
 				    "require-mppe-56\n");
 		} else
@@ -141,6 +140,11 @@ start_vpnc(void)
 			fprintf(fp, "nomppe-40\n"
 				    "nomppe-56\n"
 				    "require-mppe\n"
+				    "require-mppe-128\n");
+		} else
+		if (nvram_match(strcat_r(prefix, "pptp_options_x", tmp), "")) {
+			fprintf(fp, "require-mppe-40\n"
+				    "require-mppe-56\n"
 				    "require-mppe-128\n");
 		}
 	} else {
