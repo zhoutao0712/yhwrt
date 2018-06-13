@@ -75,6 +75,7 @@ export PKG_CONFIG_SYSROOT_DIR := $(STAGEDIR)
 export PKG_CONFIG_PATH := $(STAGEDIR)/usr/lib/pkgconfig:$(STAGEDIR)/etc/lib/pkgconfig
 
 export EXTRACFLAGS += -DLINUX_KERNEL_VERSION=$(LINUX_KERNEL_VERSION) $(if $(STAGING_DIR),--sysroot=$(STAGING_DIR))
+export EXTRALDFLAGS += $(if $(STAGING_DIR),--sysroot=$(STAGING_DIR))
 
 CPTMP = @[ -d $(TOP)/dbgshare ] && cp $@ $(TOP)/dbgshare/ || true
 
