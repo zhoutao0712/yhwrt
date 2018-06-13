@@ -27,7 +27,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "sw_mode", "1" },			// big switch for different mode
 #endif
 
-	{ "preferred_lang", "EN" },
+	{ "preferred_lang", "CN" },
 
 	// NVRAM from init_nvram: system wide parameters accodring to model and mode
 	//{ "wan_ifnames", "" },
@@ -121,10 +121,10 @@ struct nvram_tuple router_defaults[] = {
 	{ "wl_phytypes", "", 0 },		/* List of supported wireless bands (e.g. "ga") */
 	{ "wl_radioids", "", 0 },		/* List of radio IDs */
 #endif
-	{ "wl_ssid", "ASUS", 0 },		/* Service set ID (network name) */
+	{ "wl_ssid", "Zhtel", 0 },		/* Service set ID (network name) */
 #ifdef RTCONFIG_CONCURRENTREPEATER
-	{ "wl0_ssid", DEF_SSID_2G, 0 },
-	{ "wl1_ssid", DEF_SSID_5G, 0 },
+	{ "wl0_ssid", "Zhtel", 0 },
+	{ "wl1_ssid", "Zhtel_5G", 0 },
 #ifdef RTCONFIG_MTK_REP	
 	{ "wl1_bw", "1", 0 },	
 	{ "wl1.1_bw", "1", 0 },
@@ -133,10 +133,10 @@ struct nvram_tuple router_defaults[] = {
 #endif	
 #else	
 #if !defined (RTAC3200) && !defined (RTAC5300) && !defined (RTAC5300R)
-	{ "wl1_ssid", "ASUS_5G" },
+	{ "wl1_ssid", "Zhtel" },
 #else
-	{ "wl1_ssid", "ASUS_5G-1" },
-	{ "wl2_ssid", "ASUS_5G-2" },
+	{ "wl1_ssid", "Zhtel_5G-1" },
+	{ "wl2_ssid", "Zhtel_5G-2" },
 #endif
 #endif  // RTCONFIG_CONCURRENTREPEATER
 
@@ -518,7 +518,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "wl_wme_ap_vo", "3 7 1 3264 1504 off off", 0 },	/* WME AP AC_VO parameters */
 #endif
 	{ "wl_wme_no_ack", "off", 0 },		/* WME No-Acknowledgment mode */
-	{ "wl_wme_apsd", "on", 0 },		/* WME APSD mode */
+	{ "wl_wme_apsd", "off", 0 },		/* WME APSD mode */
 #ifdef RTCONFIG_RALINK
 #elif defined(RTCONFIG_QCA)
 #else
@@ -743,8 +743,8 @@ struct nvram_tuple router_defaults[] = {
 
 // WPS
 //	#if defined (W7_LOGO) || defined (WIFI_LOGO)
-	{ "wps_enable", "1" },
-	{ "wps_enable_x", "1" },
+	{ "wps_enable", "0" },
+	{ "wps_enable_x", "0" },
 //	#else
 //	{ "wps_enable_x", "0" },					// win7 logo
 //	#endif
@@ -1114,7 +1114,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "dhcp1_static_x", "0" },
 	{ "dhcp1_staticlist", "" },
 
-	{ "time_zone", "GMT0" },
+	{ "time_zone", "CST-8" },
 	{ "time_zone_dst", "0" },
 	{ "time_zone_dstoff", "M3.2.0/2,M10.2.0/2" },
 	{ "ntp_server1", "time.nist.gov" },
@@ -1991,7 +1991,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "wollist", "" },
 	{ "httpd_die_reboot", "" },
 
-	{ "x_Setting", "0" },		// is any setting set
+	{ "x_Setting", "1" },		// is any setting set
 	{ "r_Setting", "0" },		// is repeater set
 	{ "w_Setting", "0" },		// is wilreess set
 	{ "ui_Setting", "0" },		// for Language change in QIS
@@ -2044,7 +2044,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "record_lanaddr", "" },
 	{ "telnetd_enable", "0" },
 #ifdef RTCONFIG_SSH
-	{ "sshd_enable", "0" },		/* 0: disabled 1: enabled 2: enabled for LAN only */
+	{ "sshd_enable", "2" },		/* 0: disabled 1: enabled 2: enabled for LAN only */
 	{ "sshd_port", "22" },
 	{ "sshd_pass", "1" },
 	{ "sshd_authkeys", "" },
@@ -2686,7 +2686,7 @@ struct nvram_tuple router_defaults[] = {
 
 	{ "web_redirect", 	"1"		},	// Only NOLINK is redirected in default, it is overwrited in init_nvram
 	{ "disiosdet",		"1"		},
-	{ "nat_redirect_enable",	"1" },
+	{ "nat_redirect_enable",	"0" },
 
 #ifdef RTCONFIG_FANCTRL
 	{ "fanctrl_dutycycle",		"0" },
