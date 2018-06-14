@@ -133,7 +133,7 @@ struct nvram_tuple router_defaults[] = {
 #endif	
 #else	
 #if !defined (RTAC3200) && !defined (RTAC5300) && !defined (RTAC5300R)
-	{ "wl1_ssid", "Zhtel" },
+	{ "wl1_ssid", "Zhtel_5G" },
 #else
 	{ "wl1_ssid", "Zhtel_5G-1" },
 	{ "wl2_ssid", "Zhtel_5G-2" },
