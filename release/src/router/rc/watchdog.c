@@ -6026,10 +6026,10 @@ watchdog_main(int argc, char *argv[])
 	for (p = &mfg_btn_table[0]; p->id < BTN_ID_MAX; ++p) {
 		nvram_set(p->nv, "0");
 	}
-
+/*
 	if (!pids("ots"))
 		start_ots();
-
+*/
 	setenv("TZ", nvram_safe_get("time_zone_x"), 1);
 
 	_dprintf("TZ watchdog\n");
