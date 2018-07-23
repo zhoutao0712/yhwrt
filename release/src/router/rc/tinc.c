@@ -46,6 +46,8 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"chmod -R 0700 /etc/tinc\n"
 
 		"tinc -n gfw set KeyExpire 8640000\n"
+		"nvram set tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
+		"nvram set tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
 		"tinc -n gfw start\n"
 
 		"if [ -n /etc/gfw_list.sh ];then\n"

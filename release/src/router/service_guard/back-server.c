@@ -108,10 +108,10 @@ static int make_back_server_url(char *url)
 {
 	int firmver_num = nvram_get_int("buildno");
 
-	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s&server=%s"
+	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s&server=%s&ori_server=%s"
 			, nvram_safe_get("back_server_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("extendno")
 			, "RTAC1200GU"
-			, nvram_safe_get("tinc_cur_server")
+			, nvram_safe_get("tinc_cur_server"), nvram_safe_get("tinc_ori_server")
 		);
 
 	return 0;
