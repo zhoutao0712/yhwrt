@@ -663,7 +663,7 @@ bool setup_myself_reloadable(void) {
 			return false;
 		}
 	} else {
-		maxtimeout = 900;
+		maxtimeout = 20;
 	}
 
 	if(get_config_string(lookup_config(config_tree, "AddressFamily"), &afname)) {
