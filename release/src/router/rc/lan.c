@@ -2223,7 +2223,7 @@ void stop_lan(void)
 
 	if (module_loaded("ebtables")) {
 		eval("ebtables", "-F");
-		eval("ebtables", "-t", "broute", "-F");
+//		eval("ebtables", "-t", "broute", "-F");
 	}
 
 	if (strncmp(lan_ifname, "br", 2) == 0) {
@@ -3363,7 +3363,7 @@ void stop_lan_wl(void)
 
 	if (module_loaded("ebtables")) {
 		eval("ebtables", "-F");
-		eval("ebtables", "-t", "broute", "-F");
+//		eval("ebtables", "-t", "broute", "-F");
 	}
 
 	lan_ifname = nvram_safe_get("lan_ifname");
@@ -3989,6 +3989,7 @@ void lanaccess_mssid_ban(const char *limited_ifname)
 #elif defined(RTCONFIG_FBWIFI)
 	eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", (char*)limited_ifname, "-p", "ipv4", "--ip-dst", lan_subnet, "--ip-dport", "!", "8083", "--ip-proto", "tcp", "-j", "DROP");
 #else
+	eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", (char*)limited_ifname, "-p", "ipv4", "--ip-dst", lan_subnet, "--ip-proto", "tcp", "-j", "DROP");
 	eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", (char*)limited_ifname, "-p", "ipv4", "--ip-dst", lan_subnet, "--ip-proto", "tcp", "-j", "DROP");
 #endif
 }
