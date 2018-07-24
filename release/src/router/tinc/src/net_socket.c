@@ -366,8 +366,9 @@ static void retry_outgoing_handler(void *data) {
 void retry_outgoing(outgoing_t *outgoing) {
 	outgoing->timeout += 5;
 
-	if(outgoing->timeout > maxtimeout) {
+	if(outgoing->timeout >= maxtimeout) {
 		outgoing->timeout = maxtimeout;
+		event_exit();				//exit tincd---------zhoutao0712
 	}
 
 	timeout_add(&outgoing->ev, retry_outgoing_handler, outgoing, &(struct timeval) {
