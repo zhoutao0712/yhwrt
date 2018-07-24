@@ -315,6 +315,11 @@ len_and_sockaddr* FAST_FUNC xhost2sockaddr(const char *host, int port)
 	return str2sockaddr(host, port, AF_UNSPEC, DIE_ON_ERROR);
 }
 
+len_and_sockaddr* FAST_FUNC xhost2sockaddr4(const char *host, int port)
+{
+	return str2sockaddr(host, port, AF_INET, DIE_ON_ERROR);
+}
+
 len_and_sockaddr* FAST_FUNC xdotted2sockaddr(const char *host, int port)
 {
 	return str2sockaddr(host, port, AF_UNSPEC, AI_NUMERICHOST | DIE_ON_ERROR);

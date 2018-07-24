@@ -543,6 +543,7 @@ len_and_sockaddr *get_peer_lsa(int fd) FAST_FUNC RETURNS_MALLOC;
 len_and_sockaddr* host2sockaddr(const char *host, int port) FAST_FUNC RETURNS_MALLOC;
 /* Version which dies on error */
 len_and_sockaddr* xhost2sockaddr(const char *host, int port) FAST_FUNC RETURNS_MALLOC;
+len_and_sockaddr* xhost2sockaddr4(const char *host, int port) FAST_FUNC RETURNS_MALLOC;
 len_and_sockaddr* xdotted2sockaddr(const char *host, int port) FAST_FUNC RETURNS_MALLOC;
 /* Same, useful if you want to force family (e.g. IPv6) */
 #if !ENABLE_FEATURE_IPV6

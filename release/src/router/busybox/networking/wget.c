@@ -634,7 +634,7 @@ static void download_one_url(const char *url)
 
 	redir_limit = 5;
  resolve_lsa:
-	lsa = xhost2sockaddr(server.host, server.port);
+	lsa = xhost2sockaddr4(server.host, server.port);
 	if (!(option_mask32 & WGET_OPT_QUIET)) {
 		char *s = xmalloc_sockaddr2dotted(&lsa->u.sa);
 		fprintf(stderr, "Connecting to %s (%s)\n", server.host, s);
