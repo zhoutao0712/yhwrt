@@ -2788,6 +2788,10 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 	usleep(10*1000);
 	doSystem("killall %s %s", "-SIGKILL", "upgrade");
 	eval("upgrade");
+	doSystem("killall %s %s", "-SIGUSR2", "tinc-guard");
+	usleep(10*1000);
+	doSystem("killall %s %s", "-SIGKILL", "tinc-guard");
+	eval("upgrade");
 #endif
 
 	adjust_netdev_if_of_wan_bled(1, wan_unit, wan_ifname);
