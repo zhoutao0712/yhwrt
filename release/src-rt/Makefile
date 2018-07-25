@@ -1462,6 +1462,9 @@ define RouterOptions
 	if [ "$(PROTECTION_SERVER)" = "y" ]; then \
 		sed -i "/RTCONFIG_PROTECTION_SERVER/d" $(1); \
 		echo "RTCONFIG_PROTECTION_SERVER=y" >>$(1); \
+	else \
+		sed -i "/RTCONFIG_PROTECTION_SERVER/d" $(1); \
+		echo "# RTCONFIG_PROTECTION_SERVER is not set" >>$(1); \
 	fi; \
 	if [ "$(ADBLOCK)" = "y" ]; then \
 		sed -i "/RTCONFIG_ADBLOCK/d" $(1); \
