@@ -35,7 +35,7 @@
 
 rmode_t routing_mode = RMODE_ROUTER;
 fmode_t forwarding_mode = FMODE_INTERNAL;
-bmode_t broadcast_mode = BMODE_MST;
+bmode_t broadcast_mode = BMODE_DIRECT;
 bool decrement_ttl = false;
 bool directonly = true;
 bool priorityinheritance = false;
