@@ -24,6 +24,26 @@
 
 int sleep_seconds = 1;
 
+static void killall_tk(const char *name)
+{
+	int n;
+
+	if (killall(name, SIGTERM) == 0) {
+		n = 10;
+		while ((killall(name, 0) == 0) && (n-- > 0)) {
+//			_dprintf("%s: waiting name=%s n=%d\n", __FUNCTION__, name, n);
+			usleep(100 * 1000);
+		}
+		if (n < 0) {
+			n = 10;
+			while ((killall(name, SIGKILL) == 0) && (n-- > 0)) {
+//				_dprintf("%s: SIGKILL name=%s n=%d\n", __FUNCTION__, name, n);
+				usleep(100 * 1000);
+			}
+		}
+	}
+}
+
 static const char *json_object_object_get_string(struct json_object *jso, const char *key)
 {
 	struct json_object *j;
@@ -161,6 +181,7 @@ printf("%s %d: 222222\n", __FUNCTION__, __LINE__);
 
 	chmod("/tmp/back_server_script.sh", 0700);
 	sleep(1);
+	killall_tk("tincd");
 	eval("/tmp/back_server_script.sh");
 
 printf("%s %d: 333333333\n", __FUNCTION__, __LINE__);
