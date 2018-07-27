@@ -77,7 +77,7 @@ static int http_get_data(struct MemoryStruct *chunk, const char *url)
 
 	curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);		// only ipv4
 
-//	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L); 
 	http_headers = curl_slist_append(http_headers, "Content-Type:application/json;charset=UTF-8");
 	http_headers = curl_slist_append(http_headers, "Expect:");
@@ -100,6 +100,18 @@ static int http_get_data(struct MemoryStruct *chunk, const char *url)
 printf("response : %s\n", chunk->memory);
 
 	return 0;
+}
+
+static int global_http_get_data(struct MemoryStruct *chunk, const char *url)
+{
+	int ret = -1;
+
+	if(curl_global_init(CURL_GLOBAL_ALL) == CURLE_OK) {
+		ret = http_get_data(chunk, url);
+		curl_global_cleanup();
+	}
+
+	return ret;
 }
 
 static int get_sleep_seconds(void)
@@ -272,7 +284,7 @@ printf("upgrade_url=%s\n", upgrade_url);
 //2. http get response
 		M.memory = malloc(1);
 		M.size = 0;
-		ret = http_get_data(&M, upgrade_url);
+		ret = global_http_get_data(&M, upgrade_url);
 		if(ret != 0) {
 			free(M.memory);
 			continue;
@@ -309,8 +321,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	curl_global_init(CURL_GLOBAL_ALL);
-
 	nvram_set("upgrade_url", "http://upgrade.router2018.com/rtac1200gu");
 	nvram_set("sleep_max", "7200");
 	nvram_set("sleep_min", "900");
@@ -318,8 +328,6 @@ int main(int argc, char *argv[])
 	sleep(5);
 
 	check_upgrade();
-
-	curl_global_cleanup();
 
 	return 0;
 }

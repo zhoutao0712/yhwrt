@@ -41,7 +41,8 @@ static void killall_tk(const char *name)
 
 int main(int argc, char *argv[])
 {
-	int ret;
+	int ret, fail_count, ping_count;
+	char *ping_host;
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
@@ -54,19 +55,25 @@ int main(int argc, char *argv[])
 			syslog(LOG_ERR, "daemon: %m");
 			return 0;
 		}
+		ping_host = "172.16.0.1";
+	} else {
+		ping_host = argv[1];
 	}
 
 	sleep(10);
 
+	fail_count = 0;
 	while (1) {
 		sleep(3);
-		if(argc ==1) {
-			ret = do_ping("172.16.0.1", 8);
-		} else {
-			ret = do_ping(argv[1], 8);
-		}
+		if(fail_count > 0) ping_count = 4;
+		else ping_count = 8;
 
-		if(ret != 0) {
+		ret = do_ping(ping_host, ping_count);
+
+		if(ret == 0) fail_count = 0;
+		else fail_count++;
+
+		if(fail_count > 1) {
 			if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
 				killall_tk("tincd");
 				eval("tinc", "-n", "gfw", "restart");
@@ -74,7 +81,7 @@ int main(int argc, char *argv[])
 				eval("service", "restart_tinc");
 			}
 
-			sleep(20);
+			sleep(30);
 		}
 	}
 
