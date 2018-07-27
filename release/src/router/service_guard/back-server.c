@@ -233,7 +233,7 @@ static void check_back_server(void)
 
 	while (1) {
 //printf("sleep_seconds=%d\n", sleep_seconds);
-		sleep(1);
+		sleep(sleep_seconds);
 		if(sleep_seconds < 30) sleep_seconds = sleep_seconds + 5;
 
 //1. make back_server_url
