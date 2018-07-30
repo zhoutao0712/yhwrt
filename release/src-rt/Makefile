@@ -3141,6 +3141,9 @@ ifeq ($(REALTEK),y)
 	rm -f include
 	ln -sf include-n66u include
 endif
+ifneq ($(WR1200JS),y)
+	$(error "please define WR1200JS")
+endif
 	$(call save_src_config, $@)
 	$(MAKE) bin
 
