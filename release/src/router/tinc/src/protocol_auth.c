@@ -797,10 +797,6 @@ bool send_ack(connection_t *c) {
 		c->options |= OPTION_INDIRECT;
 	}
 
-	if(!lookup_config(c->config_tree, "IndirectData")) {
-		c->options |= OPTION_INDIRECT;
-	}
-
 	if((get_config_bool(lookup_config(c->config_tree, "TCPOnly"), &choice) && choice) || myself->options & OPTION_TCPONLY) {
 		c->options |= OPTION_TCPONLY | OPTION_INDIRECT;
 	}

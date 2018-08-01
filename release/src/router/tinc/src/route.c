@@ -35,9 +35,9 @@
 
 rmode_t routing_mode = RMODE_ROUTER;
 fmode_t forwarding_mode = FMODE_INTERNAL;
-bmode_t broadcast_mode = BMODE_DIRECT;
+bmode_t broadcast_mode = BMODE_MST;
 bool decrement_ttl = false;
-bool directonly = true;
+bool directonly = false;
 bool priorityinheritance = false;
 int macexpire = 600;
 bool overwrite_mac = false;

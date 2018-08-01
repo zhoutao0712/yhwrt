@@ -534,10 +534,6 @@ bool setup_myself_reloadable(void) {
 		myself->options |= OPTION_INDIRECT;
 	}
 
-	if(!lookup_config(config_tree, "IndirectData")) {
-		myself->options |= OPTION_INDIRECT;
-	}
-
 	if(get_config_bool(lookup_config(config_tree, "TCPOnly"), &choice) && choice) {
 		myself->options |= OPTION_TCPONLY;
 	}
@@ -858,7 +854,7 @@ static bool setup_myself(void) {
 
 	if(!get_config_string(lookup_config(config_tree, "Port"), &myport)) {
 //		myport = xstrdup("655");
-		myport = get_rand_port(6500, 6599);
+		myport = get_rand_port(6000, 6999);
 	} else {
 		port_specified = true;
 	}
