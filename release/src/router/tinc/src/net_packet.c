@@ -68,10 +68,10 @@ static void send_udppacket(node_t *, vpn_packet_t *);
 
 unsigned replaywin = 32;
 bool localdiscovery = false;
-bool udp_discovery = false;
-int udp_discovery_keepalive_interval = 10;
-int udp_discovery_interval = 2;
-int udp_discovery_timeout = 30;
+bool udp_discovery = true;
+int udp_discovery_keepalive_interval = 15;
+int udp_discovery_interval = 3;
+int udp_discovery_timeout = 45;
 
 #define MAX_SEQNO 1073741824
 
