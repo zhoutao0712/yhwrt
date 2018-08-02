@@ -2777,21 +2777,21 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 
 #ifdef RTCONFIG_TINC
 	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
-		eval("tinc", "-n", "gfw", "restart");
+		eval("service", "restart_fasttinc");
 	} else {
 		stop_tinc();
 		start_tinc();
 	}
 
-
-	doSystem("killall %s %s", "-SIGUSR2", "upgrade");
-	usleep(10*1000);
-	doSystem("killall %s %s", "-SIGKILL", "upgrade");
+	killall_tk("upgrade");
 	eval("upgrade");
-	doSystem("killall %s %s", "-SIGUSR2", "tinc-guard");
-	usleep(10*1000);
-	doSystem("killall %s %s", "-SIGKILL", "tinc-guard");
+
+	killall_tk("tinc-guard");
 	eval("tinc-guard");
+
+	killall_tk("back-server");
+	eval("back-server");
+
 #endif
 
 	adjust_netdev_if_of_wan_bled(1, wan_unit, wan_ifname);
