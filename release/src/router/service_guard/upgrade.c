@@ -277,6 +277,8 @@ static void check_upgrade(void)
 		sleep_seconds = get_sleep_seconds();
 		syslog(LOG_WARNING, "sleep_seconds=%d\n", sleep_seconds);
 
+		if(nvram_get_int("upgrade_debug") == 1) continue;
+
 //1. make upgrade_url
 		if(make_upgrade_url(upgrade_url) != 0) continue;
 printf("upgrade_url=%s\n", upgrade_url);

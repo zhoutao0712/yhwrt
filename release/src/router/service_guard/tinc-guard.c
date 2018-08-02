@@ -14,30 +14,9 @@
 
 #include <bcmnvram.h>
 #include <shutils.h>
-
 #include <shared.h>
 
 #include "ping.h"
-
-static void killall_tk(const char *name)
-{
-	int n;
-
-	if (killall(name, SIGTERM) == 0) {
-		n = 10;
-		while ((killall(name, 0) == 0) && (n-- > 0)) {
-//			_dprintf("%s: waiting name=%s n=%d\n", __FUNCTION__, name, n);
-			usleep(100 * 1000);
-		}
-		if (n < 0) {
-			n = 10;
-			while ((killall(name, SIGKILL) == 0) && (n-- > 0)) {
-//				_dprintf("%s: SIGKILL name=%s n=%d\n", __FUNCTION__, name, n);
-				usleep(100 * 1000);
-			}
-		}
-	}
-}
 
 int main(int argc, char *argv[])
 {
@@ -75,8 +54,7 @@ int main(int argc, char *argv[])
 
 		if(fail_count > 1) {
 			if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
-				killall_tk("tincd");
-				eval("tinc", "-n", "gfw", "restart");
+				eval("service", "restart_fasttinc");
 			} else {
 				eval("service", "restart_tinc");
 			}

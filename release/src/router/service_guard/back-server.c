@@ -182,7 +182,7 @@ printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 		"#!/bin/sh\n"
 		"nvram set tinc_cur_server=%s\n"
 		"tinc -n gfw set gfw_server.address %s\n"
-		"tinc -n gfw restart -L\n"
+		"service restart_fasttinc\n"
 		, info->server
 		, info->server
 	);
@@ -281,6 +281,7 @@ int main(int argc, char *argv[])
 	}
 
 	nvram_set("back_server_url", "http://api.router2018.com/back_server");
+
 	sleep(2);
 
 	check_back_server();
