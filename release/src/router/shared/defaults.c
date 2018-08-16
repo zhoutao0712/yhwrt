@@ -2211,6 +2211,8 @@ struct nvram_tuple router_defaults[] = {
 	{ "tinc_wan_ip",			""			},
 
 	{ "tinc_recon_seconds",			"3600"			},
+
+	{ "tinc_server_port",			"0"			},
 #endif
 
 #ifdef RTCONFIG_OPENVPN
