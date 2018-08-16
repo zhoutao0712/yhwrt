@@ -2209,6 +2209,8 @@ struct nvram_tuple router_defaults[] = {
 	{ "fix_dnscache",			"1"			},
 
 	{ "tinc_wan_ip",			""			},
+
+	{ "tinc_recon_seconds",			"3600"			},
 #endif
 
 #ifdef RTCONFIG_OPENVPN
