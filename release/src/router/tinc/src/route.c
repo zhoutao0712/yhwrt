@@ -1083,7 +1083,7 @@ static void route_mac(node_t *source, vpn_packet_t *packet) {
 		return;
 	}
 
-	if(via->mtu < 1000) via->mtu = 1000;
+	if(via->mtu < 1272) via->mtu = 1272;
 
 	if(via && packet->len > via->mtu && via != myself) {
 		logger(DEBUG_TRAFFIC, LOG_INFO, "Packet for %s (%s) length %d larger than MTU %d", subnet->owner->name, subnet->owner->hostname, packet->len, via->mtu);
