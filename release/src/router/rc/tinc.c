@@ -83,6 +83,8 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 		"chmod +x /etc/gfw_list.sh\n"
 		"/bin/sh /etc/gfw_list.sh\n"
+
+		, nvram_safe_get("tinc_gfwlist_url")
 	);
 
 	fclose(f_tinc);
