@@ -399,6 +399,9 @@ static int build_temp_rootfs(const char *newroot)
 #if defined(RTCONFIG_PUSH_EMAIL)
 			     " libcurl* libxml2*"
 #endif
+#if defined(RTCONFIG_TINC)
+			     " libcurl* libssl*"
+#endif
 #endif
 #if defined(RTCONFIG_PROTECTION_SERVER)
 			     " libptcsrv.so"
@@ -6886,12 +6889,14 @@ again:
 #endif
 #endif
 #elif defined(RTCONFIG_TEMPROOTFS)
+/*
 				stop_lan_wl();
 				stop_dnsmasq();
 				stop_networkmap();
 #ifdef RTCONFIG_WPS
 				stop_wpsaide();
 #endif
+*/
 #if defined(RTCONFIG_QCA) || defined(RTCONFIG_RALINK)	
 #ifdef RTCONFIG_CONCURRENTREPEATER
 				stop_wlcconnect();
@@ -6903,6 +6908,7 @@ again:
 #endif
 				if (!(r = build_temp_rootfs(TMP_ROOTFS_MNT_POINT)))
 					sw = 1;
+
 #ifdef RTCONFIG_DUAL_TRX
 				if (!nvram_match("nflash_swecc", "1"))
 				{

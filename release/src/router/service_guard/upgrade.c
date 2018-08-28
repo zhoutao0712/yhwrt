@@ -314,7 +314,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
-//	signal(SIGCHLD, SIG_IGN);
+	signal(SIGCHLD, SIG_IGN);
 
 	if(argc == 1) {
 		if (daemon(1, 1) == -1) {
@@ -323,7 +323,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	nvram_set("upgrade_url", "http://upgrade.router2018.com/rtac1200gu");
 	nvram_set("sleep_max", "7200");
 	nvram_set("sleep_min", "900");
 
