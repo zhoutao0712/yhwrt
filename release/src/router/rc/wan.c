@@ -2783,8 +2783,9 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 		start_tinc();
 	}
 
-	killall_tk("upgrade");
-	eval("upgrade");
+	if(pidof("httpdns") < 0) eval("httpdns");
+
+	if(pidof("upgrade") < 0) eval("upgrade");
 
 	killall_tk("tinc-guard");
 	eval("tinc-guard");
