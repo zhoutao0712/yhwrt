@@ -859,6 +859,7 @@ obj-$(RTCONFIG_GETREALIP) += ministun
 obj-$(RTCONFIG_TINC) += tinc
 obj-$(RTCONFIG_TINC) += openssl
 
+obj-$(RTCONFIG_TINC) += libevent-2.0.21
 obj-$(RTCONFIG_TINC) += curl-7.21.7
 obj-$(RTCONFIG_TINC) += service_guard
 
