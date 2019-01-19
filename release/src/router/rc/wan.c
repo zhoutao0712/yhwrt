@@ -3334,6 +3334,10 @@ stop_wan(void)
 	}
 #endif
 
+#ifdef RTCONFIG_TINC
+	stop_tinc();
+#endif
+
 #ifdef RTCONFIG_IPV6
 	stop_wan6();
 #endif
