@@ -2206,6 +2206,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "tinc_rulelist",			""			},
 	{ "tinc_guest_enable",			"0"			},
 
+	{ "fix_dnsserver",			"1"			},
 	{ "fix_dnscache",			"1"			},
 
 	{ "tinc_wan_ip",			""			},

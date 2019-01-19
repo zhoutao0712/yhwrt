@@ -2144,6 +2144,11 @@ int update_resolvconf(void)
 		goto error;
 	}
 
+
+	/* dnsmasq will resolve localhost DNS queries */
+//	fprintf(fp, "nameserver %s\n", "127.0.0.1");
+
+
 #ifdef RTCONFIG_OPENVPN
 	if (!write_vpn_resolv(fp)) {
 #endif
@@ -2190,6 +2195,12 @@ int update_resolvconf(void)
 #ifdef RTCONFIG_OPENVPN
 	}
 #endif
+
+	if(nvram_get_int("fix_dnsserver") == 1) {
+		fprintf(fp, "nameserver %s\n", "119.29.29.29");		// tencent
+		fprintf(fp, "nameserver %s\n", "223.5.5.5");		// alibaba
+		fprintf(fp, "nameserver %s\n", "180.76.76.76");		// baidu
+	}
 
 #ifdef RTCONFIG_YANDEXDNS
 	if (yadns_mode != YADNS_DISABLED) {
