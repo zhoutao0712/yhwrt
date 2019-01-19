@@ -7488,8 +7488,8 @@ static void sysinit(void)
 #endif
 
 #if !defined(CONFIG_BCMWL5)	//Broadcom set this in check_wl_territory_code()
-	void handle_location_code_for_wl(void);
-	handle_location_code_for_wl();
+//	void handle_location_code_for_wl(void);
+//	handle_location_code_for_wl();
 #endif	/* CONFIG_BCMWL5 */
 
 	init_gpio();   // for system dependent part
