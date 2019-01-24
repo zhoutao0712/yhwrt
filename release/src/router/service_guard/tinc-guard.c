@@ -101,10 +101,10 @@ DPRINTF("stamps=%u\n", monotonic_second());
 			}
 		}
 
-		if(fail_count > 0) ping_count = 2;
-		else ping_count = 3;
+		if(fail_count > 0) ping_count = 3;
+		else ping_count = 5;
 
-		sleep(1);
+		sleep(3);
 		ret = do_ping(ping_host, ping_count);
 
 		if(ret == 0) fail_count = 0;
