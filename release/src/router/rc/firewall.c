@@ -2329,12 +2329,17 @@ TRACE_PT("writing Parental Control\n");
 #endif
 
 #ifdef RTCONFIG_TINC
-	if(nvram_get_int("tinc_enable") == 1){
-		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
-		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+	char lan_class[32] = {0};
+	ip2class(lan_ip, nvram_safe_get("lan_netmask"), lan_class);
+	if(nvram_get_int("tinc_enable") == 1) {
+		eval("ebtables", "-t", "broute", "-N", "tinc");
+		eval("ebtables", "-t", "broute", "-F", "tinc");
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-p", "ipv4", "-j", "tinc");
+		eval("ebtables", "-t", "broute", "-A", "BROUTING", "-p", "ipv4", "-j", "tinc");
 		if(nvram_get_int("tinc_guest_enable") == 1) {
-			eval("ebtables", "-t", "broute", "-I", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
-			eval("ebtables", "-t", "broute", "-I", "BROUTING", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-p", "ipv4", "--ip-dst", lan_class, "-j", "RETURN");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
 		}
 	}
 #endif
