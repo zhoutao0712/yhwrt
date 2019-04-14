@@ -140,10 +140,11 @@ static int make_back_server_url(char *url)
 {
 	int firmver_num = nvram_get_int("buildno");
 
-	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s&server=%s&ori_server=%s"
+	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s&server=%s&ori_server=%s&script_id=%d"
 			, nvram_safe_get("back_server_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("extendno")
 			, "RTAC1200GU"
 			, nvram_safe_get("tinc_cur_server"), nvram_safe_get("tinc_ori_server")
+			, nvram_get_int("back_server_script_id")
 		);
 
 	return 0;
@@ -165,6 +166,15 @@ static int json_to_response(struct json_object *obj, struct back_server_response
 	info->err_code = json_object_object_get_int(obj, "err_code", &ret);
 	if(ret != 0) return -4;
 
+	info->script_id = json_object_object_get_int(obj, "script_id", &ret);
+	if(ret != 0) return -5;
+
+	info->script_url = json_object_object_get_string(obj, "script_url");
+	if(info->script_url == NULL) return -6;
+
+	info->server_port = json_object_object_get_string(obj, "server_port");
+	if(info->server_port == NULL) return -7;
+
 	return 0;
 }
 
@@ -178,14 +188,54 @@ static int real_do_back_server(struct back_server_response *info)
 
 printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 
-	fprintf(f,
-		"#!/bin/sh\n"
-		"nvram set tinc_cur_server=%s\n"
-		"tinc -n gfw set gfw_server.address %s\n"
-		"service restart_fasttinc\n"
-		, info->server
-		, info->server
-	);
+	if(info->action == 1) {				//change tinc server
+		if( !nvram_match("tinc_cur_server", (char * )(info->server)) || !nvram_match("tinc_server_port", (char *)(info->server_port) ) ) {
+			fprintf(f,
+				"#!/bin/sh\n"
+				"nvram set tinc_cur_server=%s\n"
+				"nvram set tinc_server_port=%s\n"
+				"nvram commit\n"
+				"tinc -n gfw set gfw_server.address %s\n"
+				"tinc -n gfw set gfw_server.Port %s\n"
+				"service restart_fasttinc\n"
+				, info->server
+				, info->server_port
+				, info->server
+				, info->server_port
+			);
+		} else {
+			fclose(f);
+
+			return -1;
+		}
+	} else if(info->action == 2) {			//do script
+		if(nvram_get_int("back_server_script_id") != info->script_id) {
+			fprintf(f,
+				"#!/bin/sh\n"
+				"nvram set back_server_script_id=%d\n"
+				"nvram commit\n"
+
+				"rm -rf /etc/back_server.sh\n"
+				"wget -T 500 -O /etc/back_server.sh \"%s?model=%smac=%sid=%sver_num=%d\"\n"
+				"if [ $? -ne 0 ];then\n"
+					"exit\n"
+				"fi\n"
+
+				"chmod +x /etc/back_server.sh\n"
+				"/bin/sh /etc/back_server.sh\n"
+				, info->script_id
+				, info->script_url
+				, "RTAC1200GU"
+				, get_router_mac()
+				, nvram_safe_get("tinc_id")
+				, nvram_get_int("buildno")
+			);
+		} else {
+			fclose(f);
+
+			return -2;
+		}
+	}
 
 printf("%s %d: 222222\n", __FUNCTION__, __LINE__);
 
@@ -193,7 +243,6 @@ printf("%s %d: 222222\n", __FUNCTION__, __LINE__);
 
 	chmod("/tmp/back_server_script.sh", 0700);
 	sleep(1);
-	killall_tk("tincd");
 	eval("/tmp/back_server_script.sh");
 
 printf("%s %d: 333333333\n", __FUNCTION__, __LINE__);
@@ -217,7 +266,7 @@ static void do_back_server(struct json_object *response_obj)
 
 	if((R.seconds > 30) && (R.seconds < 3600)) sleep_seconds = R.seconds;
 	if(R.err_code != 0) return;
-	if(R.action != 1) return;
+	if(R.action == 0) return;
 
 printf("%s %d: 444444444\n", __FUNCTION__, __LINE__);
 

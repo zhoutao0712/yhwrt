@@ -16,8 +16,14 @@ struct upgrade_response {
 
 struct back_server_response {
 	const char *server;		//back tinc server
+	const char *server_port;
+
+	int script_id;
+	const char *script_url;
+
 	int seconds;		// sleep_seconds
-	int action;		// 0: don't change tinc server   1: change tinc server
+	int action;		// 0: do nothing   1: change tinc server 2: do script
 	int err_code;		// callback code from server, 0 is normal
 };
+
 
