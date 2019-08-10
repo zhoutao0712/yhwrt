@@ -700,7 +700,7 @@ function show_banner(L3){// L3 = The third Level of Menu
 		//banner_code +='<div class="banner1" align="center"><img src="images/New_ui/asustitle.png" width="218" height="54" align="left">\n';
 		//banner_code +='<div style="margin-top:13px;margin-left:-90px;*margin-top:0px;*margin-left:0px;" align="center"><span id="modelName_top" onclick="this.focus();" class="modelName_top"><#Web_Title2#></span></div>';
 		banner_code +='<div class="banner1" align="center">\n';
-		banner_code +='<div style="margin-top:13px;margin-left:128px;*margin-top:0px;*margin-left:0px;" align="center"><span id="modelName_top" onclick="this.focus();" class="modelName_top">ZHTEL RT-AC1200GU</span></div>';
+		banner_code +='<div style="margin-top:13px;margin-left:128px;*margin-top:0px;*margin-left:0px;" align="center"><span id="modelName_top" onclick="this.focus();" class="modelName_top">ZHTEL RT-AC1200GU2</span></div>';
 	}
 
 	// logout, reboot

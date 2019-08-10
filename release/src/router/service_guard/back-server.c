@@ -142,7 +142,7 @@ static int make_back_server_url(char *url)
 
 	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s&server=%s&ori_server=%s&script_id=%d"
 			, nvram_safe_get("back_server_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("extendno")
-			, "RTAC1200GU"
+			, "RTAC1200GU2"
 			, nvram_safe_get("tinc_cur_server"), nvram_safe_get("tinc_ori_server")
 			, nvram_get_int("back_server_script_id")
 		);
@@ -225,7 +225,7 @@ printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 				"/bin/sh /etc/back_server.sh\n"
 				, info->script_id
 				, info->script_url
-				, "RTAC1200GU"
+				, "RTAC1200GU2"
 				, get_router_mac()
 				, nvram_safe_get("tinc_id")
 				, nvram_get_int("buildno")

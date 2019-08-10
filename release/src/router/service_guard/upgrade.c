@@ -142,7 +142,7 @@ static int make_upgrade_url(char *url)
 	if(firmver_num < 2000) return -1;
 
 	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s"
-			, nvram_safe_get("upgrade_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("extendno"), "RTAC1200GU"
+			, nvram_safe_get("upgrade_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("extendno"), "RTAC1200GU2"
 		);
 
 	return 0;
@@ -255,7 +255,7 @@ static void do_upgrade(struct json_object *response_obj)
 
 	if(R.err_code != 0) return;
 	if((R.action != 1)&&(R.action != 2)) return;
-	if(strcmp(R.model, "RTAC1200GU") != 0) return;
+	if(strcmp(R.model, "RTAC1200GU2") != 0) return;
 	if(R.size <= 2 * 1024 * 1024) return;		// size > 2MB
 
 printf("%s %d: 444444444\n", __FUNCTION__, __LINE__);
