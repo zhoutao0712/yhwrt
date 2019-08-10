@@ -218,7 +218,7 @@ define platformKernelConfig
 				sed -i "/CONFIG_GE1_RGMII_FORCE_1000/d" $(1); \
 				echo "CONFIG_GE1_RGMII_FORCE_1000=y" >>$(1); \
 				sed -i "/CONFIG_RAETH_GMAC2/d" $(1); \
-				echo "CONFIG_RAETH_GMAC2=y" >>$(1); \
+				echo "# CONFIG_RAETH_GMAC2  is not set" >>$(1); \
 				sed -i "/CONFIG_MAC_TO_GIGAPHY_MODE_ADDR2/d" $(1); \
 				echo "CONFIG_MAC_TO_GIGAPHY_MODE_ADDR2=4" >>$(1); \
 				sed -i "/CONFIG_HW_IPSEC/d" $(1); \
@@ -477,7 +477,7 @@ define platformKernelConfig
 			sed -i "/CONFIG_MT7603E_INTERNAL_PA_EXTERNAL_LNA/d" $(1); \
 			echo "# CONFIG_MT7603E_INTERNAL_PA_EXTERNAL_LNA is not set" >>$(1); \
 			sed -i "/CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA/d" $(1); \
-			echo "# CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA is not set" >>$(1); \
+			echo "CONFIG_MT7603E_EXTERNAL_PA_EXTERNAL_LNA=y" >>$(1); \
 		fi; \
 	fi; \
 	if [ "$(SECOND_IF)" = "MT7612E" ]  && [ "$(RPAC56)" = "" ] ; then \
@@ -515,8 +515,6 @@ define platformKernelConfig
 		echo "# CONFIG_WSC_NFC_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_DOT11N_DRAFT3/d" $(1); \
 		echo "CONFIG_DOT11N_DRAFT3=y" >>$(1); \
-		sed -i "/CONFIG_DOT11_VHT_AC/d" $(1); \
-		echo "CONFIG_DOT11_VHT_AC=y" >>$(1); \
 		sed -i "/CONFIG_DOT11W_PMF_SUPPORT/d" $(1); \
 		echo "# CONFIG_DOT11W_PMF_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_TXBF_SUPPORT/d" $(1); \
@@ -549,8 +547,6 @@ define platformKernelConfig
 		echo "CONFIG_RTMP_FLASH_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_LED_CONTROL_SUPPORT/d" $(1); \
 		echo "CONFIG_LED_CONTROL_SUPPORT=y" >>$(1); \
-		sed -i "/CONFIG_SINGLE_SKU_V2/d" $(1); \
-		echo "CONFIG_SINGLE_SKU_V2=y" >>$(1); \
 		sed -i "/CONFIG_ATE_SUPPORT/d" $(1); \
 		echo "CONFIG_ATE_SUPPORT=y" >>$(1); \
 		sed -i "/CONFIG_RT2860V2_AP_32B_DESC/d" $(1); \
@@ -590,11 +586,11 @@ define platformKernelConfig
 		fi; \
 		if [ "$(WR1200JS)" = "y" ]; then \
 			sed -i "/CONFIG_FIRST_CARD_EXTERNAL_PA/d" $(1); \
-			echo "# CONFIG_FIRST_CARD_EXTERNAL_PA is not set" >>$(1); \
+			echo "CONFIG_FIRST_CARD_EXTERNAL_PA=y" >>$(1); \
 			sed -i "/CONFIG_FIRST_CARD_EXTERNAL_LNA/d" $(1); \
-			echo "# CONFIG_FIRST_CARD_EXTERNAL_LNA is not set " >>$(1); \
+			echo "CONFIG_FIRST_CARD_EXTERNAL_LNA=y" >>$(1); \
 			sed -i "/CONFIG_SECOND_CARD_EXTERNAL_PA/d" $(1); \
-			echo "CONFIG_SECOND_CARD_EXTERNAL_PA=y " >>$(1); \
+			echo "CONFIG_SECOND_CARD_EXTERNAL_PA=y" >>$(1); \
 			sed -i "/CONFIG_SECOND_CARD_EXTERNAL_LNA/d" $(1); \
 			echo "CONFIG_SECOND_CARD_EXTERNAL_LNA=y" >>$(1); \
 		fi; \
@@ -638,7 +634,7 @@ define platformKernelConfig
 		sed -i "/CONFIG_NINTENDO_AP/d" $(1); \
 		echo "# CONFIG_NINTENDO_AP is not set" >>$(1); \
 		sed -i "/CONFIG_COC_SUPPORT/d" $(1); \
-		echo "CONFIG_COC_SUPPORT=y " >>$(1); \
+		echo "# CONFIG_COC_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_DELAYED_TCP_ACK_SUPPORT/d" $(1); \
 		echo "# CONFIG_DELAYED_TCP_ACK_SUPPORT is not set" >>$(1); \
 		sed -i "/CONFIG_RALINK_RT28XX/d" $(1); \
