@@ -269,7 +269,7 @@ struct nvram_tuple router_defaults[] = {
 	{ "wl_macmode", "disabled", 0 },	/* "allow" only, "deny" only, or "disabled"
 						 * (allow all)
 						 */
-	{ "wl_assoc_retry_max", "3", 0 },	/* Non-zero limit for association retries */
+	{ "wl_assoc_retry_max", "5", 0 },	/* Non-zero limit for association retries */
 #ifndef RTCONFIG_BCMWL6
 	{ "wl_channel", "0", 0 },		/* Channel number */
 #else
@@ -294,7 +294,7 @@ struct nvram_tuple router_defaults[] = {
 #if defined (RTCONFIG_BCMARM) && !defined (RTCONFIG_BCM7) && !defined(RTCONFIG_BCM9)
 	{ "frameburst_dyn", "0", 0 },		/* Frameburst controlled dynamically if on */
 #endif
-	{ "wl_rateset", "default", 0 },		/* "default" or "all" or "12" */
+	{ "wl_rateset", "12", 0 },		/* "default" or "all" or "12" */
 	{ "wl_frag", "2346", 0 },		/* Fragmentation threshold */
 	{ "wl_rts", "2347", 0 },		/* RTS threshold */
 #ifdef RTCONFIG_RALINK
@@ -1773,8 +1773,8 @@ struct nvram_tuple router_defaults[] = {
 	{ "log_ipaddr", "" },
 	{ "log_port", "514" },
 	{ "log_size", "256" },
-	{ "log_level", "6" },		/* < LOG_INFO */
-	{ "console_loglevel", "5" },	/* < KERN_NOTICE */
+	{ "log_level", "4" },		/* < LOG_INFO */
+	{ "console_loglevel", "1" },	/* < KERN_NOTICE */
 
 #if defined(RTCONFIG_JFFS2) || defined(RTCONFIG_BRCM_NAND_JFFS2)
 	{ "jffs2_on", "1" },

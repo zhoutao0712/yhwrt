@@ -2560,7 +2560,7 @@ get_router_mac(void)
 
 	memset(mac_str, 0, 18);
 
-	if (FRead(buf, OFFSET_MAC_ADDR_2G, 6)<0)
+	if (FRead(buf, OFFSET_MAC_GMAC0, 6)<0)
 	{
 		printf("%s: READ router MAC address fail\n", __FUNCTION__);
 		return NULL;

@@ -2808,6 +2808,8 @@ wan_up(char *pwan_ifname)	// oleg patch, replace
 
 	adjust_netdev_if_of_wan_bled(1, wan_unit, wan_ifname);
 
+	led_control(LED_WAN, LED_ON);
+
 #ifdef RTCONFIG_BWDPI
 	int debug = nvram_get_int("bwdpi_debug");
 	int enabled = check_bwdpi_nvram_setting();
@@ -2962,6 +2964,8 @@ wan_down(char *wan_ifname)
 	if (*nvram_safe_get(strcat_r(prefix, "xdns", tmp)))
 		nvram_unset(strcat_r(prefix, "dns", tmp));
 	update_resolvconf();
+
+	led_control(LED_WAN, LED_OFF);
 
 #ifdef RTCONFIG_DUALWAN
 	if(nvram_match("wans_mode", "lb"))

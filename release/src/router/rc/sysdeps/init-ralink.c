@@ -212,6 +212,8 @@ static void init_switch_ralink(void)
 #endif
 //	reinit_hwnat(-1);
 
+	eval("switch", "reg", "w", "0x94", "0x40500001");
+	eval("switch", "reg", "w", "0x90", "0x80001002");
 }
 
 void init_switch()

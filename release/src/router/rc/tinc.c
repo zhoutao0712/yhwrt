@@ -39,7 +39,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 		"ip rule add to 8.8.8.8 pref 5 table 200\n"
 
-		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-AC1200GU&ver_sub=%s\"\n"
+		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-AC1200GU2&ver_sub=%s\"\n"
 		"if [ $? -ne 0 ];then\n"
 			"exit\n"
 		"fi\n"
@@ -153,7 +153,7 @@ int make_guest_id(void)
 	memset(id, 0, sizeof(id));
 
 //	system("!/bin/sh\ncat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2|md5sum|head -c 8 >/tmp/etc/id_et0\n");
-	sprintf(script, "#!/bin/sh\necho %sRTAC1200GU|md5sum|head -c 8 >/etc/id_et0\n", get_router_mac());
+	sprintf(script, "#!/bin/sh\necho %sRTAC1200GU2|md5sum|head -c 8 >/etc/id_et0\n", get_router_mac());
 	system(script);
 
 	if((fd = open("/dev/urandom", O_RDONLY)) < 0) {
@@ -214,7 +214,7 @@ int ate_write_model(void)
 	int i_offset;
 
 	memset(buffer, 0, sizeof(buffer));
-	memcpy(buffer, "WR1200JS", strlen("WR1200JS"));
+	memcpy(buffer, "NEWIFI3", strlen("NEWIFI3"));
 
 	i_offset = 0x1020;
 
@@ -278,7 +278,7 @@ static int ate_erase_id(void)
 int guest_id_main(int argc, char *argv[])
 {
 	if(argv[1] == NULL) return -1;
-	if((argv[2] == NULL)||(strcmp(argv[2], "20171230") != 0)) return -2;
+	if((argv[2] == NULL)||(strcmp(argv[2], "20190804") != 0)) return -2;
 
 	if(!strcmp(argv[1], "read")) {
 		return ate_read_id();

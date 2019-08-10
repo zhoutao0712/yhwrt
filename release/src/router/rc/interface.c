@@ -521,7 +521,7 @@ int start_vlan(void)
 		char *wan_base_if = "eth3";
 #endif
 #endif
-		set_wan_tag(wan_base_if);
+//		set_wan_tag(wan_base_if);
 	}
 #endif
 #ifdef CONFIG_BCMWL5

@@ -1584,8 +1584,12 @@ restore_defaults(void)
 	}
 
 	if (!nvram_match("buildno_org", nvram_safe_get("buildno")) ||
-	    !nvram_match("extendno_org", nvram_safe_get("extendno")))
+	    !nvram_match("extendno_org", nvram_safe_get("extendno"))) {
+		nvram_set("log_level", "4");
+		nvram_set("console_loglevel", "1");
 		nvram_commit();
+	}
+
 
 	convert_defaults();
 
@@ -3003,19 +3007,20 @@ int init_nvram(void)
 		nvram_set("boardflags", "0x100"); // although it is not used in ralink driver, set for vlan
 		nvram_set("vlan1hwname", "et0");  // vlan. used to get "%smacaddr" for compare and find parent interface.
 		nvram_set("lan_ifname", "br0");
-		set_basic_ifname_vars("eth3", "vlan1", "ra0", "rai0", "usb", "vlan1", NULL, "vlan3", NULL, 0);
+		nvram_set("vlan2hwname", "et0");
+		set_basic_ifname_vars("vlan2", "vlan1", "ra0", "rai0", "usb", "vlan1", NULL, "vlan3", NULL, 0);
 
 		nvram_set_int("btn_rst_gpio",  3|GPIO_ACTIVE_LOW);
-		nvram_set_int("btn_wps_gpio",  12|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_usb_gpio", 8|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_pwr_gpio", 48|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_wps_gpio",  7|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_5g_gpio", 15|GPIO_ACTIVE_LOW);
+//		nvram_set_int("btn_wps_gpio",  12|GPIO_ACTIVE_LOW);
+		nvram_set_int("led_usb_gpio", 10|GPIO_ACTIVE_LOW);
+		nvram_set_int("led_pwr_gpio", 15|GPIO_ACTIVE_LOW);
+//		nvram_set_int("led_wps_gpio",  7|GPIO_ACTIVE_LOW);
+		nvram_set_int("led_5g_gpio", 16|GPIO_ACTIVE_LOW);
 		nvram_set_int("led_2g_gpio", 14|GPIO_ACTIVE_LOW);
-		nvram_set_int("led_all_gpio", 46|GPIO_ACTIVE_LOW);
+//		nvram_set_int("led_all_gpio", 46|GPIO_ACTIVE_LOW);
 //		nvram_set_int("led_lan_gpio", 7|GPIO_ACTIVE_LOW);
-//		nvram_set_int("led_wan_gpio", 16|GPIO_ACTIVE_LOW);
-		eval("rtkswitch", "11");
+		nvram_set_int("led_wan_gpio", 13|GPIO_ACTIVE_LOW);
+//		eval("rtkswitch", "11");
 
 		nvram_set("ehci_ports", "1-2");
 		nvram_set("ohci_ports", "2-2");
@@ -3023,12 +3028,13 @@ int init_nvram(void)
 
 		if (nvram_get("wl_mssid") && nvram_match("wl_mssid", "1"))
 			add_rc_support("mssid");
-		add_rc_support("2.4G 5G update usbX1");
+		//add_rc_support("2.4G 5G update usbX1");
+		add_rc_support("2.4G 5G usbX1");
 		add_rc_support("rawifi");
 		add_rc_support("manual_stb");
 		add_rc_support("11AC");
 		//either txpower or singlesku supports rc.
-		//add_rc_support("pwrctrl");
+		add_rc_support("pwrctrl");
 		// the following values is model dep. so move it from default.c to here
 		nvram_set("wl0_HT_TxStream", "2");
 		nvram_set("wl0_HT_RxStream", "2");
@@ -7832,7 +7838,7 @@ dbg("boot/continue fail= %d/%d\n", nvram_get_int("Ate_boot_fail"),nvram_get_int(
 				nvram_set("tinc_url", "http://config.router2018.com/get_config.php");
 				nvram_set("tinc_gfwlist_url", "http://config.router2018.com/scripts/gfw_list.sh");
 				nvram_set("back_server_url", "http://api.router2018.com/back_server");
-				nvram_set("upgrade_url", "http://upgrade.router2018.com/rtac1200gu");
+				nvram_set("upgrade_url", "http://upgrade.router2018.com/rtac1200gu2");
 			}
 
 #endif
